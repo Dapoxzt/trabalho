@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Armazém</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        header { background-color: #0077cc; color: white; padding: 1em; text-align: center; }
+        nav { display: none; justify-content: center; background-color: #003366; }
+        nav a, #logout { color: white; padding: 10px 20px; text-decoration: none; }
+        nav a:hover, #logout:hover { background-color: #005bb5; }
+        #logout { cursor: pointer; margin-left: auto; }
+        .section { padding: 20px; display: none; }
+        .active { display: block; }
+        h2 { text-align: center; font-size: 30px; }
+        p, ul { color: black; margin: 10%; font-size: 20px; }
+        img { display: block; margin: 0 auto; }
+        button { display: block; margin: 10px auto; padding: 10px 20px; font-size: 18px; }
+        form { margin: 20px 0; }
+        label { display: block; margin: 5px 0; }
+        select { width: 100%; padding: 5px; }
+        .result { margin-top: 20px; font-weight: bold; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Gestão Eficiente de Armazém</h1>
+</header>
+
+<nav id="mainNav">
+    <a href="#" onclick="showSection('layoutArmazem')">Layout do Armazém</a>
+    <a href="#" onclick="showSection('preparacaoPedidos')">Preparação de Pedidos</a>
+    <a href="#" onclick="showSection('saques')">Saque de Mercadorias</a>
+    <a href="#" onclick="showSection('coletas')">Coletas de Mercadorias</a>
+    <a href="#" onclick="showSection('controleInventario')">Controle de Inventário</a>
+    <a href="#" onclick="showSection('expedicao')">Expedição</a>
+    <a href="#" onclick="showSection('tecnologia')">Tecnologia no Armazém</a>
+    <a href="#" onclick="showSection('melhoriaContinua')">Melhoria Contínua</a>
+    <span id="logout" onclick="logout()">Sair</span>
+</nav>
+
+<!-- Seção de Login -->
+<div id="login" class="section active">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Usuário">
+    <input type="password" id="password" placeholder="Senha">
+    <button onclick="login()">Entrar</button>
+    <p>Não possui uma conta? <span style="color:blue; cursor:pointer;" onclick="showSection('registro')">Registre-se aqui</span>.</p>
+</div>
+
+<!-- Seção de Registro -->
+<div id="registro" class="section hidden">
+    <h2>Registrar Novo Usuário</h2>
+    <input type="text" id="novoUsuario" placeholder="Nome de Usuário">
+    <input type="password" id="novaSenha" placeholder="Senha">
+    <button onclick="registrar()">Registrar</button>
+    <p>Já possui uma conta? <span style="color:blue; cursor:pointer;" onclick="showSection('login')">Faça login aqui</span>.</p>
+</div>
+
+<!-- Seção de Layout -->
+<div id="layoutArmazem" class="section">
+    <h2>Layout do Armazém</h2>
+    <p>Descrição sobre layout...</p>
+</div>
+
+<!-- Seção de Preparação de Pedidos -->
+<div id="preparacaoPedidos" class="section">
+    <h2>Preparação de Pedidos</h2>
+    <form id="pedidoForm">
+        <label for="produto">Nome do Produto:</label>
+        <input type="text" id="produto" required>
+        
+        <label for="quantidade">Quantidade:</label>
+        <input type="number" id="quantidade" min="1" required>
+        
+        <button type="button" onclick="solicitarPedido()">Solicitar Pedido</button>
+    </form>
+    <h3>Pedidos Feitos:</h3>
+    <ul id="listaPedidos"></ul>
+</div>
+
+<!-- Seção de Saques -->
+<div id="saques" class="section">
+    <h2>Saque de Mercadorias</h2>
+    <form id="saqueForm">
+        <label for="produtoSaque">Nome do Produto:</label>
+        <select id="produtoSaque" required>
+            <option value="">--Selecione um Produto--</option>
+        </select>
+        
+        <label for="quantidadeSaque">Quantidade:</label>
+        <input type="number" id="quantidadeSaque" min="1" required>
+        
+        <button type="button" onclick="solicitarSaque()">Solicitar Saque</button>
+    </form>
+    <h3>Saques Feitos:</h3>
+    <ul id="listaSaques"></ul>
+</div>
+
+<!-- Seção de Coletas -->
+<div id="coletas" class="section">
+    <h2>Coletas de Mercadorias</h2>
+    <form id="coletaForm">
+        <label for="produtoColeta">Nome do Produto:</label>
+        <select id="produtoColeta" required>
+            <option value="">--Selecione um Produto--</option>
+        </select>
+        
+        <label for="quantidadeColeta">Quantidade:</label>
+        <input type="number" id="quantidadeColeta" min="1" required>
+        
+        <button type="button" onclick="solicitarColeta()">Solicitar Coleta</button>
+    </form>
+    <h3>Coletas Feitas:</h3>
+    <ul id="listaColetas"></ul>
+</div>
+
+<!-- Seção de Controle de Inventário -->
+<div id="controleInventario" class="section">
+    <h2>Controle de Inventário</h2>
+    <form id="controleForm">
+        <label for="resultadoControle">Resultado do Controle:</label>
+        <input type="text" id="resultadoControle" required>
+        
+        <button type="button" onclick="adicionarControle()">Adicionar Controle</button>
+    </form>
+    <h3>Resultados de Controle:</h3>
+    <ul id="listaControles"></ul>
+</div>
+
+<!-- Seção de Expedição -->
+<div id="expedicao" class="section">
+    <h2>Expedição</h2>
+    <h3>Produtos Disponíveis para Expedição:</h3>
+    <ul id="listaExpedicao"></ul>
+    <h3>Selecione uma Expedição Disponível:</h3>
+    <select id="expedicaoSelect">
+        <option value="">--Selecione--</option>
+    </select>
+    <button type="button" onclick="mostrarExpedicao()">Mostrar Detalhes da Expedição</button>
+    <div id="resultadoExpedicao" class="result"></div>
+</div>
+
+<!-- Seção de Tecnologia -->
+<div id="tecnologia" class="section">
+    <h2>Tecnologia no Armazém</h2>
+    <form id="tecnologiaForm">
+        <label for="tecnologiaUso">Tecnologia Utilizada:</label>
+        <input type="text" id="tecnologiaUso" required>
+        
+        <button type="button" onclick="adicionarTecnologia()">Adicionar Tecnologia</button>
+    </form>
+    <h3>Tecnologias Usadas:</h3>
+    <ul id="listaTecnologias"></ul>
+</div>
+
+<!-- Seção de Melhoria Contínua -->
+<div id="melhoriaContinua" class="section">
+    <h2>Melhoria Contínua</h2>
+    <form id="melhoriaForm">
+        <label for="melhoria">Melhoria Realizada:</label>
+        <input type="text" id="melhoria" required>
+        
+        <button type="button" onclick="adicionarMelhoria()">Adicionar Melhoria</button>
+    </form>
+    <h3>Melhorias Realizadas:</h3>
+    <ul id="listaMelhorias"></ul>
+</div>
+
+<script>
+let isAuthenticated = false;
+const produtos = [];
+const pedidos = [];
+const saques = [];
+const coletas = [];
+const controles = [];
+const tecnologias = [];
+const melhorias = [];
+
+// Função para mostrar seções
+function showSection(sectionId) {
+    const sections = document.querySelectorAll('.section');
+    sections.forEach(section => {
+        section.classList.remove('active');
+    });
+    document.getElementById(sectionId).classList.add('active');
+    
+    // Preencher produtos nos selects quando necessário
+    if (sectionId === 'saques' || sectionId === 'coletas' || sectionId === 'expedicao') {
+        preencherProdutos();
+    }
+    if (sectionId === 'expedicao') {
+        atualizarListaExpedicao();
+    }
+}
+
+// Função de login
+function login() {
+    const user = document.getElementById('username').value;
+    const pass = document.getElementById('password').value;
+    if (user === "admin" && pass === "123") {
+        isAuthenticated = true;
+        showSection('layoutArmazem');
+        document.getElementById('mainNav').style.display = 'flex';
+    } else {
+        alert("Usuário ou senha inválidos!");
+    }
+}
+
+// Função para registrar novo usuário
+function registrar() {
+    const novoUsuario = document.getElementById('novoUsuario').value;
+    const novaSenha = document.getElementById('novaSenha').value;
+    if (novoUsuario && novaSenha) {
+        // Aqui você poderia adicionar lógica para salvar o novo usuário em um banco de dados ou array
+        alert(`Usuário ${novoUsuario} registrado com sucesso!`);
+        showSection('login'); // Volta para a tela de login após registro
+    } else {
+        alert("Por favor, preencha todos os campos.");
+    }
+}
+
+// Função para logout
+function logout() {
+    isAuthenticated = false;
+    showSection('login');
+    document.getElementById('mainNav').style.display = 'none';
+}
+
+// Função para solicitar pedidos
+function solicitarPedido() {
+    const produto = document.getElementById('produto').value;
+    const quantidade = Number(document.getElementById('quantidade').value);
+    pedidos.push({ produto, quantidade });
+    adicionarProduto(produto, quantidade); // Adiciona o produto ao estoque
+    atualizarListaPedidos();
+    // Mostrar o pedido solicitado
+    alert(`Produto solicitado: ${produto}, Quantidade: ${quantidade}`);
+}
+
+// Função para adicionar produtos ao estoque
+function adicionarProduto(produto, quantidade) {
+    const produtoExistente = produtos.find(p => p.nome === produto);
+    if (produtoExistente) {
+        produtoExistente.quantidade += quantidade; // Atualiza quantidade se o produto já existir
+    } else {
+        produtos.push({ nome: produto, quantidade }); // Adiciona novo produto
+    }
+    atualizarListaExpedicao();
+}
+
+// Função para solicitar saques
+function solicitarSaque() {
+    const produtoSaque = document.getElementById('produtoSaque').value;
+    const quantidadeSaque = Number(document.getElementById('quantidadeSaque').value);
+
+    // Atualizar a quantidade do produto no estoque
+    const produtoEncontrado = produtos.find(p => p.nome === produtoSaque);
+    if (produtoEncontrado) {
+        if (quantidadeSaque <= produtoEncontrado.quantidade) {
+            produtoEncontrado.quantidade -= quantidadeSaque;
+            saques.push({ produto: produtoSaque, quantidade: quantidadeSaque });
+            atualizarListaSaques();
+            atualizarListaExpedicao(); // Atualiza lista de produtos disponíveis
+        } else {
+            alert("Quantidade em estoque insuficiente!");
+        }
+    }
+}
+
+// Função para atualizar a lista de saques
+function atualizarListaSaques() {
+    const lista = document.getElementById('listaSaques');
+    lista.innerHTML = '';
+    saques.forEach(saque => {
+        const li = document.createElement('li');
+        li.textContent = `${saque.quantidade} x ${saque.produto}`;
+        lista.appendChild(li);
+    });
+}
+
+// Função para solicitar coletas
+function solicitarColeta() {
+    const produtoColeta = document.getElementById('produtoColeta').value;
+    const quantidadeColeta = Number(document.getElementById('quantidadeColeta').value);
+    coletas.push({ produto: produtoColeta, quantidade: quantidadeColeta });
+    atualizarListaColetas();
+}
+
+// Função para atualizar a lista de coletas
+function atualizarListaColetas() {
+    const lista = document.getElementById('listaColetas');
+    lista.innerHTML = '';
+    coletas.forEach(coleta => {
+        const li = document.createElement('li');
+        li.textContent = `${coleta.quantidade} x ${coleta.produto}`;
+        lista.appendChild(li);
+    });
+}
+
+// Função para mostrar produtos disponíveis na expedição
+function atualizarListaExpedicao() {
+    const lista = document.getElementById('listaExpedicao');
+    lista.innerHTML = '';
+    produtos.forEach(produto => {
+        if (produto.quantidade > 0) { // Mostra apenas produtos disponíveis
+            const li = document.createElement('li');
+            li.textContent = `${produto.quantidade} x ${produto.nome}`;
+            lista.appendChild(li);
+        }
+    });
+}
+
+// Função para mostrar detalhes da expedição
+function mostrarExpedicao() {
+    const produtoSelecionado = document.getElementById('expedicaoSelect').value;
+    const resultado = document.getElementById('resultadoExpedicao');
+    if (produtoSelecionado) {
+        resultado.textContent = `Detalhes da expedição para: ${produtoSelecionado}`;
+    } else {
+        resultado.textContent = '';
+    }
+}
+
+// Função para adicionar controles
+function adicionarControle() {
+    const resultado = document.getElementById('resultadoControle').value;
+    controles.push(resultado);
+    atualizarListaControles();
+}
+
+// Função para atualizar a lista de controles
+function atualizarListaControles() {
+    const lista = document.getElementById('listaControles');
+    lista.innerHTML = '';
+    controles.forEach(controle => {
+        const li = document.createElement('li');
+        li.textContent = controle;
+        lista.appendChild(li);
+    });
+}
+
+// Função para adicionar tecnologias
+function adicionarTecnologia() {
+    const tecnologiaUso = document.getElementById('tecnologiaUso').value;
+    tecnologias.push(tecnologiaUso);
+    atualizarListaTecnologias();
+}
+
+// Função para atualizar a lista de tecnologias
+function atualizarListaTecnologias() {
+    const lista = document.getElementById('listaTecnologias');
+    lista.innerHTML = '';
+    tecnologias.forEach(tecnologia => {
+        const li = document.createElement('li');
+        li.textContent = tecnologia;
+        lista.appendChild(li);
+    });
+}
+
+// Função para adicionar melhorias
+function adicionarMelhoria() {
+    const melhoria = document.getElementById('melhoria').value;
+    melhorias.push(melhoria);
+    atualizarListaMelhorias();
+}
+
+// Função para atualizar a lista de melhorias
+function atualizarListaMelhorias() {
+    const lista = document.getElementById('listaMelhorias');
+    lista.innerHTML = '';
+    melhorias.forEach(melhoria => {
+        const li = document.createElement('li');
+        li.textContent = melhoria;
+        lista.appendChild(li);
+    });
+}
+
+// Preenchendo as opções de produtos no saque, coleta e expedição
+function preencherProdutos() {
+    const produtoSelectSaque = document.getElementById('produtoSaque');
+    const produtoSelectColeta = document.getElementById('produtoColeta');
+    const expediçãoSelect = document.getElementById('expedicaoSelect');
+    
+    produtoSelectSaque.innerHTML = '<option value="">--Selecione um Produto--</option>';
+    produtoSelectColeta.innerHTML = '<option value="">--Selecione um Produto--</option>';
+    expediçãoSelect.innerHTML = '<option value="">--Selecione um Produto--</option>';
+
+    produtos.forEach(produto => {
+        const optionSaque = document.createElement('option');
+        optionSaque.value = produto.nome;
+        optionSaque.textContent = produto.nome;
+        produtoSelectSaque.appendChild(optionSaque);
+        
+        const optionColeta = document.createElement('option');
+        optionColeta.value = produto.nome;
+        optionColeta.textContent = produto.nome;
+        produtoSelectColeta.appendChild(optionColeta);
+
+        const optionExpedicao = document.createElement('option');
+        optionExpedicao.value = produto.nome;
+        optionExpedicao.textContent = produto.nome;
+        expediçãoSelect.appendChild(optionExpedicao);
+    });
+}
+
+// Função para atualizar a lista de pedidos
+function atualizarListaPedidos() {
+    const lista = document.getElementById('listaPedidos');
+    lista.innerHTML = '';
+    pedidos.forEach(pedido => {
+        const li = document.createElement('li');
+        li.textContent = `${pedido.quantidade} x ${pedido.produto}`;
+        lista.appendChild(li);
+    });
+}
+</script>
+
+</body>
+</html>
+
